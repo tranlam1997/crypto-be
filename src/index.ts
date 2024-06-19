@@ -1,6 +1,8 @@
 import { Elysia } from "elysia";
 import { airDrops } from "./controllers/airdrops";
 import swagger from "@elysiajs/swagger";
+import cors from "@elysiajs/cors";
+import serverTiming from "@elysiajs/server-timing";
 
 const app = new Elysia().use(swagger({
     documentation: {
@@ -26,5 +28,9 @@ const app = new Elysia().use(swagger({
         ]
     },
 
-})).use(airDrops).get("/", () => "Hello Elysia").listen(3000);
+}))
+.use(cors())
+.use(serverTiming())
+.use(airDrops)
+.get("/", () => "Hello Elysia").listen(3000);
 console.log(`Server running at http://${app.server?.hostname}:${app.server?.port}`)
