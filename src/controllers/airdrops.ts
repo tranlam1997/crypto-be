@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { AirDropsService } from "../services/airdrops";
-import { PaginationSchema } from "../schemas/pagination";
+import { PaginationSchema } from "../shared/dtos/pagination";
 
 export const AirDropsController = new Elysia({ prefix: '/airdrops' })
     .get('/', AirDropsService.getAirDrops, {
