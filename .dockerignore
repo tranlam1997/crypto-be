@@ -1,0 +1,12 @@
+.vscode
+drizzle
+node_modules
+.eslintignore
+.eslintrc.json
+.gitignore
+.prettierignore
+.prettierrc
+docker-compose.yml
+Dockerfile
+drizzle.config.ts
+README.md

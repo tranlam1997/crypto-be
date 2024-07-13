@@ -1,6 +1,6 @@
 {
-  "id": "29c3b184-70b9-44c7-9d35-0f83d0054bb0",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "c7e97808-1811-4a86-b47b-34ddcee504cd",
+  "prevId": "29c3b184-70b9-44c7-9d35-0f83d0054bb0",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -162,6 +162,12 @@
         },
         "winner": {
           "name": "winner",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mission": {
+          "name": "mission",
           "type": "text",
           "primaryKey": false,
           "notNull": false

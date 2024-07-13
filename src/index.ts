@@ -9,6 +9,6 @@ const app = new Elysia()
 .use(cors())
 .use(serverTiming())
 .use(AirDropsController)
-.get("/", () => "Hello Elysia").listen(3000);
+.get("/ping", () => "Hello Elysia").listen(3000);
 
 console.log(`Server running at http://${app.server?.hostname}:${app.server?.port}`)

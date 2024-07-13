@@ -1,0 +1,1 @@
+ALTER TABLE "air_drops" ADD COLUMN "mission" text;

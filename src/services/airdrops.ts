@@ -1,36 +1,114 @@
-import { Context } from "elysia";
-import { AirDropsRepository } from "../repositories/airdrops"
-import { ResponseResult } from "../shared/response-result";
-import { GetAllAirDropsQuery } from "../shared/interfaces/query";
+import { NotFoundError } from 'elysia';
+import { AirDropsRepository } from '../repositories/airdrops';
+import {
+  CreateAirDropsBody,
+  DeleteAirDropsBody,
+  GetAirDropsQuery,
+  GetChainAirDropsQuery,
+  GetClaimableAirDropsQuery,
+  GetConfirmedAirDropsQuery,
+  GetHottestAirDropsQuery,
+  GetNewAirDropsQuery,
+  UpdateAirDropBody,
+} from '../shared/interfaces/airdrop';
+import { paginationResult } from '../shared/pagination';
+import { responseResult } from '../shared/response-result';
 
 export const AirDropsService = {
-    async getAirDrops({ query }: { query: GetAllAirDropsQuery }) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
-    },
+  async getAirDrops({ query }: { query: GetAirDropsQuery }) {
+    const result = await AirDropsRepository.getAll(query);
+    return paginationResult(result);
+  },
 
-    async getNewAirDrops(context: Context) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
-    },
+  async createAirDrops({ body }: { body: CreateAirDropsBody[] }) {
+    const result = await Promise.all(
+      body.map(async (item) => {
+        const airDropDetail = item.airDropDetail;
 
-    async getHottestAirDrops(context: Context) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
-    },
+        delete item.airDropDetail;
 
-    async getConfirmedAirDrops(context: Context) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
-    },
+        const airDrop = item;
 
-    async getChainAirDrops(context: Context) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
-    },
+        const result = await AirDropsRepository.create({
+          airDrop,
+          airDropDetail,
+        });
 
-    async getClaimableAirDrops(context: Context) {
-        const result = await AirDropsRepository.getAll();
-        return ResponseResult.success(result);
+        return {
+          airDrop: { ...airDrop, id: result.airDropId },
+          airDropDetail: { ...airDropDetail, id: result.airDropDetailId },
+        };
+      }),
+    );
+
+    return responseResult.success(result);
+  },
+
+  async updateAirDrop({ body }: { body: UpdateAirDropBody }) {
+    const id = body.airDropId;
+
+    if (!(await AirDropsRepository.existEntity(id))) {
+      throw new NotFoundError(`AirDrop id ${id} not found`);
     }
-}
+
+    const airDropDetail = body.airDropDetail;
+
+    body.airDropDetail ? delete body.airDropDetail : null;
+    delete body.airDropId;
+
+    const airDrop = body;
+
+    await AirDropsRepository.update({
+      id,
+      airDrop,
+      airDropDetail,
+    });
+
+    return responseResult.success();
+  },
+
+  async deleteAirDrops({ body }: { body: DeleteAirDropsBody }) {
+    const ids = body.airDropIds;
+
+    await AirDropsRepository.delete(ids);
+
+    return responseResult.success();
+  },
+
+  async getNewAirDrops({ query }: { query: GetNewAirDropsQuery }) {
+    const result = await AirDropsRepository.getByConditions(query);
+    return paginationResult(result);
+  },
+
+  async getHottestAirDrops({ query }: { query: GetHottestAirDropsQuery }) {
+    const result = await AirDropsRepository.getByConditions({
+      ...query,
+      isHottest: true,
+    });
+    return paginationResult(result);
+  },
+
+  async getConfirmedAirDrops({ query }: { query: GetConfirmedAirDropsQuery }) {
+    const result = await AirDropsRepository.getByConditions({
+      ...query,
+      isConfirmed: true,
+    });
+
+    return paginationResult(result);
+  },
+
+  async getClaimableAirDrops({ query }: { query: GetClaimableAirDropsQuery }) {
+    const result = await AirDropsRepository.getByConditions({
+      ...query,
+      isClaimable: true,
+    });
+
+    return paginationResult(result);
+  },
+
+  async getChainAirDrops({ query }: { query: GetChainAirDropsQuery }) {
+    const result = await AirDropsRepository.getByConditions(query);
+
+    return paginationResult(result);
+  },
+};

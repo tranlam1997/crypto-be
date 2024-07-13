@@ -1,9 +1,0 @@
-{
-  "dialect": "sqlite",
-  "out": "./drizzle",
-  "schema": "./src/db/schema.ts",
-  "breakpoints": true,
-  "dbCredentials": {
-    "url": "file:./crypto.db"
-  }
-}

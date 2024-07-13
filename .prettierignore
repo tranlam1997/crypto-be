@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+coverage
+.env
+.gitignore
+.prettierignore
+.prettierrc
+.drizzle.config.ts
+**/*.json
+**/*.md
+drizzle

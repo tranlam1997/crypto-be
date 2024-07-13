@@ -1,9 +1,12 @@
-import { Database } from 'bun:sqlite';
-import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
-const sqlite = new Database('crypto.db');
+const queryClient = postgres({
+  host: process.env.DB_HOST,
+  port: +process.env.DB_PORT,
+  user: process.env.DB_USER,
+  pass: process.env.DB_PASSWORD,
+  db: process.env.DB_NAME,
+});
 
-export const db = drizzle(sqlite);
-
-migrate(db, { migrationsFolder: "./drizzle" });
+export const db = drizzle(queryClient);

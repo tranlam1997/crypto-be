@@ -1,33 +1,49 @@
-import { sql } from 'drizzle-orm'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
-export const airDrops = sqliteTable('air_drops', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
-    name: text('name').notNull(),
-    chain: text('chain').notNull(),
-    vote: integer('vote', { mode: 'number' }).notNull(),
-    reward: text('reward').notNull(),
-    winner: text('winner').notNull(),
-    deadline: text('deadline').default(sql`(CURRENT_TIMESTAMP)`),
-    confirmed: integer('confirmed', { mode: 'boolean' }).default(false),
-    claimable: integer('claimable', { mode: 'boolean' }).default(false),
-    createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
-})
+export type NewAirDrop = typeof airDrops.$inferInsert;
 
-export const airDropDetails = sqliteTable('air_drop_details', {
-    id: integer('id').primaryKey({ autoIncrement: true }),
-    airDropId: integer("air_drop_id").references(() => airDrops.id),
-    step: text('step'),
-    description: text('description'),
-    previousPhase: text('previous_phase'),
-    website: text('website'),
-    twitter: text('twitter'),
-    telegram: text('telegram'),
-    discord: text('discord'),
-    blog: text('blog'),
-    github: text('github'),
-    otherInfo: text('other_info', { mode: 'json' }),
-    createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
-})
+export type NewAirDropDetail = typeof airDropDetails.$inferInsert;
+
+export const airDrops = pgTable('air_drops', {
+  id: serial('id').primaryKey(),
+  name: text('name'),
+  chain: text('chain'),
+  vote: integer('vote'),
+  reward: text('reward'),
+  winner: text('winner'),
+  mission: text('mission'),
+  deadline: timestamp('deadline', { mode: 'date' }).defaultNow(),
+  confirmed: boolean('confirmed').default(false),
+  claimable: boolean('claimable').default(false),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow(),
+});
+
+export const airDropDetails = pgTable('air_drop_details', {
+  id: serial('id').primaryKey(),
+  airDropId: integer('air_drop_id')
+    .notNull()
+    .references(() => airDrops.id),
+  image: text('image'),
+  banner: text('banner'),
+  step: text('step'),
+  description: text('description'),
+  previousPhase: text('previous_phase'),
+  website: text('website'),
+  twitter: text('twitter'),
+  telegram: text('telegram'),
+  discord: text('discord'),
+  blog: text('blog'),
+  github: text('github'),
+  otherInfo: jsonb('other_info'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
