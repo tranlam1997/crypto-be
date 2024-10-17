@@ -69,7 +69,16 @@ export const AirDropsRepository = {
   },
 
   async getById(id: number) {
-    return await db.select().from(airDrops).where(eq(airDrops.id, id));
+    return await db
+      .select<{ [k: string]: any }>({
+        ...airDrops,
+        detailInfo: {
+          ...airDropDetails,
+        },
+      } as any)
+      .from(airDrops)
+      .leftJoin(airDropDetails, eq(airDrops.id, airDropDetails.airDropId))
+      .where(eq(airDrops.id, id));
   },
 
   async getByConditions(params: GetAirDropByConditions) {

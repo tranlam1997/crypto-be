@@ -20,6 +20,16 @@ export const AirDropsService = {
     return paginationResult(result);
   },
 
+  async getAirDropDetail({ params: { id } }) {
+    const result = await AirDropsRepository.getById(id);
+
+    if(!result?.length) {
+      throw new NotFoundError();
+    }
+
+    return responseResult.success(result[0].detailInfo);
+  },
+
   async createAirDrops({ body }: { body: CreateAirDropsBody[] }) {
     const result = await Promise.all(
       body.map(async (item) => {

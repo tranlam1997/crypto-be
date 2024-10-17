@@ -50,4 +50,5 @@ export const AirDropsController = new Elysia({
   })
   .get('/by-chain', AirDropsService.getChainAirDrops, {
     query: GetChainAirDropSchema,
-  });
+  })
+  .get('/:id', AirDropsService.getAirDropDetail);
